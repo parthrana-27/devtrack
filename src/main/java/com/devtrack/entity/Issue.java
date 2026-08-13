@@ -69,4 +69,8 @@ public class Issue {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sprint_id")
+    private Sprint sprint;
 }
