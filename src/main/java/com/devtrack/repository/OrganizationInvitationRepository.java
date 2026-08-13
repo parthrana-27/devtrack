@@ -1,0 +1,15 @@
+package com.devtrack.repository;
+
+import com.devtrack.entity.OrganizationInvitation;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface OrganizationInvitationRepository extends JpaRepository<OrganizationInvitation, Long> {
+    Optional<OrganizationInvitation> findByToken(String token);
+    List<OrganizationInvitation> findByOrganizationId(Long organizationId);
+    boolean existsByOrganizationIdAndEmailAndStatus(Long organizationId, String email, com.devtrack.entity.InvitationStatus status);
+}
