@@ -57,10 +57,10 @@ export default function ProjectDetails() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-6rem)]">
+    <div className="flex flex-col h-[calc(100vh-6rem)] animate-fade-in">
       <div className="mb-6 sm:flex sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">Project: Payment Gateway</h1>
-        <button className="mt-4 sm:mt-0 inline-flex items-center justify-center rounded-md border border-transparent bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-brand-700">
+        <button className="mt-4 sm:mt-0 inline-flex items-center justify-center rounded-md border border-transparent bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-brand-700 hover:scale-105 transition-all duration-200">
           Create Issue
         </button>
       </div>
@@ -73,7 +73,7 @@ export default function ProjectDetails() {
               const issues = column.issueIds.map((issueId) => data.issues[issueId as keyof typeof data.issues]);
 
               return (
-                <div key={column.id} className="flex flex-col w-80 bg-gray-100 rounded-lg flex-shrink-0 max-h-full">
+                <div key={column.id} className="flex flex-col w-80 bg-gray-100 rounded-lg flex-shrink-0 max-h-full animate-slide-in-right" style={{ animationDelay: `${data.columnOrder.indexOf(columnId) * 100}ms` }}>
                   <h3 className="px-4 py-3 text-sm font-medium text-gray-900 bg-gray-200 rounded-t-lg">
                     {column.title}
                   </h3>
@@ -87,12 +87,12 @@ export default function ProjectDetails() {
                         {issues.map((issue, index) => (
                           <Draggable key={issue.id} draggableId={issue.id} index={index}>
                             {(provided) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                className="p-4 mb-2 bg-white border border-gray-200 rounded shadow-sm hover:border-brand-500"
-                              >
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  className="p-4 mb-2 bg-white border border-gray-200 rounded shadow-sm hover:border-brand-500 hover:shadow-md transition-all duration-200 group"
+                                >
                                 <div className="text-xs text-gray-500 mb-1">{issue.id}</div>
                                 <div className="text-sm font-medium text-gray-900">{issue.content}</div>
                               </div>

@@ -8,29 +8,29 @@ const data = [
 
 export default function Dashboard() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
       
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
+        <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow hover:shadow-lg hover:-translate-y-1 transition-all duration-300 sm:p-6 animate-slide-up" style={{ animationDelay: '0ms' }}>
           <dt className="truncate text-sm font-medium text-gray-500">Total Active Projects</dt>
           <dd className="mt-1 text-3xl font-semibold tracking-tight text-gray-900">3</dd>
         </div>
-        <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
+        <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow hover:shadow-lg hover:-translate-y-1 transition-all duration-300 sm:p-6 animate-slide-up" style={{ animationDelay: '100ms' }}>
           <dt className="truncate text-sm font-medium text-gray-500">Open Issues</dt>
           <dd className="mt-1 text-3xl font-semibold tracking-tight text-brand-600">35</dd>
         </div>
-        <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
+        <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow hover:shadow-lg hover:-translate-y-1 transition-all duration-300 sm:p-6 animate-slide-up" style={{ animationDelay: '200ms' }}>
           <dt className="truncate text-sm font-medium text-gray-500">Completed This Week</dt>
           <dd className="mt-1 text-3xl font-semibold tracking-tight text-green-600">12</dd>
         </div>
-        <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
+        <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow hover:shadow-lg hover:-translate-y-1 transition-all duration-300 sm:p-6 animate-slide-up" style={{ animationDelay: '300ms' }}>
           <dt className="truncate text-sm font-medium text-gray-500">Overdue Issues</dt>
           <dd className="mt-1 text-3xl font-semibold tracking-tight text-red-600">7</dd>
         </div>
       </div>
 
-      <div className="rounded-lg bg-white p-6 shadow">
+      <div className="rounded-lg bg-white p-6 shadow animate-slide-up" style={{ animationDelay: '400ms' }}>
         <h2 className="text-lg font-medium text-gray-900 mb-4">Project Overview</h2>
         <div className="h-80 w-full">
           <ResponsiveContainer width="100%" height="100%">
