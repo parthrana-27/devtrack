@@ -2,6 +2,7 @@ package com.devtrack.controller;
 
 import com.devtrack.dto.IssueRequest;
 import com.devtrack.dto.IssueResponse;
+import com.devtrack.dto.IssueSearchCriteria;
 import com.devtrack.dto.IssueUpdateRequest;
 import com.devtrack.service.IssueService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,6 +56,16 @@ public class IssueController {
             Pageable pageable,
             Authentication authentication) {
         return ResponseEntity.ok(issueService.getProjectIssues(projectId, pageable, authentication.getName()));
+    }
+
+    @PostMapping("/project/{projectId}/search")
+    public ResponseEntity<Page<IssueResponse>> searchIssues(
+            @PathVariable Long projectId,
+            @RequestBody IssueSearchCriteria criteria,
+            Pageable pageable,
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(issueService.searchIssues(projectId, criteria, pageable, authentication.getName()));
     }
 
     @PutMapping("/{id}")

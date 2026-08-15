@@ -2,6 +2,7 @@ package com.devtrack.service.impl;
 
 import com.devtrack.dto.IssueRequest;
 import com.devtrack.dto.IssueResponse;
+import com.devtrack.dto.IssueSearchCriteria;
 import com.devtrack.dto.IssueUpdateRequest;
 import com.devtrack.entity.Issue;
 import com.devtrack.entity.IssueStatus;
@@ -10,17 +11,26 @@ import com.devtrack.entity.User;
 import com.devtrack.exception.BadRequestException;
 import com.devtrack.exception.ResourceNotFoundException;
 import com.devtrack.exception.UnauthorizedException;
+import com.devtrack.messaging.IssueEvent;
+import com.devtrack.messaging.KafkaProducerService;
 import com.devtrack.repository.IssueRepository;
+import com.devtrack.repository.IssueSpecification;
 import com.devtrack.repository.ProjectRepository;
 import com.devtrack.repository.UserRepository;
 import com.devtrack.security.OrganizationSecurity;
+import com.devtrack.service.AuditLogService;
 import com.devtrack.service.IssueService;
 import com.devtrack.service.WorkflowValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +41,8 @@ public class IssueServiceImpl implements IssueService {
     private final UserRepository userRepository;
     private final OrganizationSecurity organizationSecurity;
     private final WorkflowValidator workflowValidator;
+    private final KafkaProducerService kafkaProducerService;
+    private final AuditLogService auditLogService;
 
     @Override
     @Transactional
@@ -70,11 +82,24 @@ public class IssueServiceImpl implements IssueService {
                 .build();
 
         issue = issueRepository.save(issue);
+
+        auditLogService.logAction(currentUser, "CREATED", "ISSUE", issue.getId().toString(), "Issue created");
+
+        kafkaProducerService.publishIssueEvent(IssueEvent.builder()
+                .issueId(issue.getId())
+                .issueKey(issue.getIssueKey())
+                .action("CREATED")
+                .triggeredByEmail(currentUserEmail)
+                .timestamp(LocalDateTime.now())
+                .message("Issue created")
+                .build());
+
         return mapToResponse(issue);
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "issue", key = "#id + '-' + #currentUserEmail")
     public IssueResponse getIssue(Long id, String currentUserEmail) {
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Issue not found"));
@@ -84,11 +109,26 @@ public class IssueServiceImpl implements IssueService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "issueByKey", key = "#issueKey + '-' + #currentUserEmail")
     public IssueResponse getIssueByKey(String issueKey, String currentUserEmail) {
         Issue issue = issueRepository.findByIssueKey(issueKey)
                 .orElseThrow(() -> new ResourceNotFoundException("Issue not found with key: " + issueKey));
         checkReadAccess(issue, currentUserEmail);
         return mapToResponse(issue);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<IssueResponse> searchIssues(Long projectId, IssueSearchCriteria criteria, Pageable pageable, String currentUserEmail) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
+        
+        if (!organizationSecurity.isMember(project.getOrganization().getId(), currentUserEmail)) {
+            throw new UnauthorizedException("You do not have access to this project");
+        }
+
+        return issueRepository.findAll(IssueSpecification.searchIssues(projectId, criteria), pageable)
+                .map(this::mapToResponse);
     }
 
     @Override
@@ -107,6 +147,8 @@ public class IssueServiceImpl implements IssueService {
 
     @Override
     @Transactional
+    @CachePut(value = "issue", key = "#id + '-' + #currentUserEmail")
+    @CacheEvict(value = "issueByKey", allEntries = true)
     public IssueResponse updateIssue(Long id, IssueUpdateRequest request, String currentUserEmail) {
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Issue not found"));
@@ -129,9 +171,12 @@ public class IssueServiceImpl implements IssueService {
         if (request.getStoryPoints() != null) issue.setStoryPoints(request.getStoryPoints());
         if (request.getDueDate() != null) issue.setDueDate(request.getDueDate());
 
+        StringBuilder actionMessage = new StringBuilder();
+
         if (request.getStatus() != null) {
             workflowValidator.validateTransition(issue.getStatus(), request.getStatus());
             issue.setStatus(request.getStatus());
+            actionMessage.append("Status changed to ").append(request.getStatus()).append(".");
         }
 
         if (request.getAssigneeId() != null) {
@@ -141,14 +186,30 @@ public class IssueServiceImpl implements IssueService {
                 throw new BadRequestException("Assignee must be a member of the organization");
             }
             issue.setAssignee(newAssignee);
+            actionMessage.append(" Assginee changed.");
         }
 
         issue = issueRepository.save(issue);
+
+        if (actionMessage.length() > 0) {
+            auditLogService.logAction(currentUser, "UPDATED", "ISSUE", issue.getId().toString(), actionMessage.toString().trim());
+            
+            kafkaProducerService.publishIssueEvent(IssueEvent.builder()
+                    .issueId(issue.getId())
+                    .issueKey(issue.getIssueKey())
+                    .action("UPDATED")
+                    .triggeredByEmail(currentUserEmail)
+                    .timestamp(LocalDateTime.now())
+                    .message(actionMessage.toString().trim())
+                    .build());
+        }
+
         return mapToResponse(issue);
     }
 
     @Override
     @Transactional
+    @CacheEvict(value = {"issue", "issueByKey"}, allEntries = true)
     public void deleteIssue(Long id, String currentUserEmail) {
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Issue not found"));
@@ -161,6 +222,8 @@ public class IssueServiceImpl implements IssueService {
             throw new UnauthorizedException("Only organization admins or the project manager can delete issues");
         }
 
+        auditLogService.logAction(getUserByEmail(currentUserEmail), "DELETED", "ISSUE", issue.getId().toString(), "Issue deleted");
+        
         issueRepository.delete(issue);
     }
 

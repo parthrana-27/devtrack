@@ -16,6 +16,9 @@ import com.devtrack.repository.UserRepository;
 import com.devtrack.security.OrganizationSecurity;
 import com.devtrack.service.ProjectService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,6 +74,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "project", key = "#id + '-' + #currentUserEmail")
     public ProjectResponse getProject(Long id, String currentUserEmail) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
@@ -84,6 +88,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "projectByKey", key = "#key + '-' + #currentUserEmail")
     public ProjectResponse getProjectByKey(String key, String currentUserEmail) {
         Project project = projectRepository.findByKey(key)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found with key: " + key));
@@ -108,6 +113,8 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
+    @CachePut(value = "project", key = "#id + '-' + #currentUserEmail")
+    @CacheEvict(value = "projectByKey", allEntries = true)
     public ProjectResponse updateProject(Long id, ProjectUpdateRequest request, String currentUserEmail) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
@@ -143,6 +150,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"project", "projectByKey"}, allEntries = true)
     public void deleteProject(Long id, String currentUserEmail) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
