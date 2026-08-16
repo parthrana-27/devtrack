@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const defaultTheme = require('tailwindcss/defaultTheme');
+
 export default {
   content: [
     "./index.html",
@@ -6,6 +8,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', ...defaultTheme.fontFamily.sans],
+      },
       colors: {
         brand: {
           50: '#f0fdfa',
@@ -19,6 +24,10 @@ export default {
           800: '#115e59',
           900: '#134e4a',
         },
+      },
+      boxShadow: {
+        'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
+        'glass-sm': '0 2px 10px rgba(0, 0, 0, 0.05)',
       },
       keyframes: {
         'fade-in': {

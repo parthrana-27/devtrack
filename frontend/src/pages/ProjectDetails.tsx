@@ -60,7 +60,7 @@ export default function ProjectDetails() {
     <div className="flex flex-col h-[calc(100vh-6rem)] animate-fade-in">
       <div className="mb-6 sm:flex sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">Project: Payment Gateway</h1>
-        <button className="mt-4 sm:mt-0 inline-flex items-center justify-center rounded-md border border-transparent bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-brand-700 hover:scale-105 transition-all duration-200">
+        <button className="mt-4 sm:mt-0 inline-flex items-center justify-center rounded-xl border border-transparent bg-gradient-to-r from-brand-600 to-brand-500 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200">
           Create Issue
         </button>
       </div>
@@ -73,10 +73,15 @@ export default function ProjectDetails() {
               const issues = column.issueIds.map((issueId) => data.issues[issueId as keyof typeof data.issues]);
 
               return (
-                <div key={column.id} className="flex flex-col w-80 bg-gray-100 rounded-lg flex-shrink-0 max-h-full animate-slide-in-right" style={{ animationDelay: `${data.columnOrder.indexOf(columnId) * 100}ms` }}>
-                  <h3 className="px-4 py-3 text-sm font-medium text-gray-900 bg-gray-200 rounded-t-lg">
-                    {column.title}
-                  </h3>
+                <div key={column.id} className="flex flex-col w-80 glass rounded-2xl flex-shrink-0 max-h-full animate-slide-in-right border border-white/40" style={{ animationDelay: `${data.columnOrder.indexOf(columnId) * 100}ms` }}>
+                  <div className="px-5 py-4 border-b border-gray-200/50 flex justify-between items-center">
+                    <h3 className="text-sm font-bold text-gray-800 tracking-wide">
+                      {column.title}
+                    </h3>
+                    <span className="bg-white/60 text-gray-600 text-xs font-semibold px-2.5 py-0.5 rounded-full shadow-sm">
+                      {issues.length}
+                    </span>
+                  </div>
                   <Droppable droppableId={column.id}>
                     {(provided) => (
                       <div
@@ -91,11 +96,14 @@ export default function ProjectDetails() {
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
-                                  className="p-4 mb-2 bg-white border border-gray-200 rounded shadow-sm hover:border-brand-500 hover:shadow-md transition-all duration-200 group"
+                                  className="p-4 mb-3 bg-white/90 backdrop-blur-sm border border-white/50 rounded-xl shadow-sm hover:shadow-md hover:border-brand-400 transition-all duration-200 group"
                                 >
-                                <div className="text-xs text-gray-500 mb-1">{issue.id}</div>
-                                <div className="text-sm font-medium text-gray-900">{issue.content}</div>
-                              </div>
+                                  <div className="flex justify-between items-start mb-2">
+                                    <div className="text-xs font-medium text-brand-600 bg-brand-50 px-2 py-0.5 rounded text-brand-700">{issue.id}</div>
+                                    <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-gray-200 to-gray-300 border border-white shadow-sm"></div>
+                                  </div>
+                                  <div className="text-sm font-semibold text-gray-800 leading-snug">{issue.content}</div>
+                                </div>
                             )}
                           </Draggable>
                         ))}
