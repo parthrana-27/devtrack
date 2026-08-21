@@ -24,6 +24,12 @@ export default {
           800: '#115e59',
           900: '#134e4a',
         },
+        obsidian: '#08090D',
+        charcoal: '#111318',
+        graphite: '#181B22',
+        'electric-violet': '#8B5CF6',
+        'cyan-blue': '#22D3EE',
+        emerald: '#34D399',
       },
       boxShadow: {
         'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',

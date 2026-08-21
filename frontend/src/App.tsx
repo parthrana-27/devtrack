@@ -7,6 +7,8 @@ import Projects from './pages/Projects';
 import ProjectDetails from './pages/ProjectDetails';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
+import Landing from './pages/Landing';
+
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
   if (!isAuthenticated) {
@@ -20,9 +22,14 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* Public Landing Page */}
+          <Route path="/" element={<Landing />} />
+          
+          {/* Auth Routes */}
           <Route path="/login" element={<Login />} />
           
-          <Route path="/" element={
+          {/* Protected Application Routes */}
+          <Route path="/dashboard" element={
             <ProtectedRoute>
               <Layout />
             </ProtectedRoute>

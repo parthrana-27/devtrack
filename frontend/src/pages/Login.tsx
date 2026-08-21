@@ -43,23 +43,23 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 bg-cover bg-center" style={{ backgroundImage: 'radial-gradient(at 0% 0%, hsla(253,16%,7%,0.02) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,0.03) 0, transparent 50%)' }}>
-      <div className="w-full max-w-md space-y-8 glass p-10 rounded-2xl animate-fade-in relative overflow-hidden">
+    <div className="flex min-h-screen items-center justify-center bg-transparent py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8 glass-dark p-10 rounded-2xl animate-fade-in relative overflow-hidden">
         {/* Decorative subtle glowing orb */}
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-brand-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-brand-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-electric-violet rounded-full mix-blend-screen filter blur-[80px] opacity-20"></div>
+        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-cyan-blue rounded-full mix-blend-screen filter blur-[80px] opacity-20"></div>
         
         <div className="relative">
-          <h2 className="mt-2 text-center text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
+          <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-white">
             {isLogin ? 'Welcome Back' : 'Create an Account'}
           </h2>
-          <p className="text-center text-sm text-gray-500 mt-2">
+          <p className="text-center text-sm text-gray-400 mt-2">
             {isLogin ? 'Sign in to access DevTrack' : 'Join the ultimate issue tracking platform'}
           </p>
         </div>
         <form className="mt-8 space-y-6 relative" onSubmit={handleSubmit}>
           {error && (
-            <div className="bg-red-50/80 backdrop-blur-sm p-3 rounded-xl border border-red-100 text-red-600 text-sm text-center animate-slide-up" style={{ animationDelay: '0ms' }}>
+            <div className="bg-red-500/10 backdrop-blur-sm p-3 rounded-xl border border-red-500/20 text-red-400 text-sm text-center animate-slide-up" style={{ animationDelay: '0ms' }}>
               {error}
             </div>
           )}
@@ -67,12 +67,12 @@ export default function Login() {
           <div className="space-y-5 rounded-md shadow-sm">
             {!isLogin && (
               <div className="animate-slide-up" style={{ animationDelay: '100ms' }}>
-                <label className="block text-sm font-medium text-gray-700 ml-1">Full Name</label>
+                <label className="block text-sm font-medium text-gray-300 ml-1">Full Name</label>
                 <input
                   name="name"
                   type="text"
                   required={!isLogin}
-                  className="mt-1 block w-full rounded-xl border border-gray-200 bg-white/50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 sm:text-sm transition-all"
+                  className="mt-1 block w-full rounded-xl border border-white/10 bg-charcoal px-4 py-3 text-white placeholder-gray-500 focus:border-electric-violet focus:outline-none focus:ring-2 focus:ring-electric-violet/20 sm:text-sm transition-all"
                   placeholder="John Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -81,13 +81,13 @@ export default function Login() {
             )}
             
             <div className="animate-slide-up" style={{ animationDelay: '200ms' }}>
-              <label className="block text-sm font-medium text-gray-700 ml-1">Email address</label>
+              <label className="block text-sm font-medium text-gray-300 ml-1">Email address</label>
               <input
                 name="email"
                 type="email"
                 autoComplete="email"
                 required
-                className="mt-1 block w-full rounded-xl border border-gray-200 bg-white/50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 sm:text-sm transition-all"
+                className="mt-1 block w-full rounded-xl border border-white/10 bg-charcoal px-4 py-3 text-white placeholder-gray-500 focus:border-electric-violet focus:outline-none focus:ring-2 focus:ring-electric-violet/20 sm:text-sm transition-all"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -95,13 +95,13 @@ export default function Login() {
             </div>
             
             <div className="animate-slide-up" style={{ animationDelay: '300ms' }}>
-              <label className="block text-sm font-medium text-gray-700 ml-1">Password</label>
+              <label className="block text-sm font-medium text-gray-300 ml-1">Password</label>
               <input
                 name="password"
                 type="password"
                 autoComplete="current-password"
                 required
-                className="mt-1 block w-full rounded-xl border border-gray-200 bg-white/50 px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 sm:text-sm transition-all"
+                className="mt-1 block w-full rounded-xl border border-white/10 bg-charcoal px-4 py-3 text-white placeholder-gray-500 focus:border-electric-violet focus:outline-none focus:ring-2 focus:ring-electric-violet/20 sm:text-sm transition-all"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -110,12 +110,12 @@ export default function Login() {
 
             {!isLogin && (
               <div className="animate-slide-up" style={{ animationDelay: '400ms' }}>
-                <label className="block text-sm font-medium text-gray-700 ml-1">Role</label>
+                <label className="block text-sm font-medium text-gray-300 ml-1">Role</label>
                 <select
                   name="role"
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="mt-1 block w-full rounded-xl border border-gray-200 bg-white/50 px-4 py-3 text-gray-900 focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 sm:text-sm transition-all"
+                  className="mt-1 block w-full rounded-xl border border-white/10 bg-charcoal px-4 py-3 text-white focus:border-electric-violet focus:outline-none focus:ring-2 focus:ring-electric-violet/20 sm:text-sm transition-all"
                 >
                   <option value="DEVELOPER">Developer</option>
                   <option value="PROJECT_MANAGER">Project Manager</option>
@@ -128,19 +128,19 @@ export default function Login() {
           <div className="animate-slide-up" style={{ animationDelay: '500ms' }}>
             <button
               type="submit"
-              className="group relative flex w-full justify-center rounded-xl border border-transparent bg-gradient-to-r from-brand-600 to-brand-500 py-3 px-4 text-sm font-semibold text-white shadow-md hover:from-brand-500 hover:to-brand-400 hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 transition-all duration-200"
+              className="group relative flex w-full justify-center rounded-xl border border-transparent bg-electric-violet py-3 px-4 text-sm font-semibold text-white shadow-md hover:bg-electric-violet/90 hover:shadow-[0_0_20px_rgba(139,92,246,0.3)] hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-electric-violet focus:ring-offset-2 transition-all duration-200"
             >
               {isLogin ? 'Sign In' : 'Create Account'}
             </button>
           </div>
           
           <div className="text-center text-sm animate-slide-up" style={{ animationDelay: '600ms' }}>
-            <span className="text-gray-500">
+            <span className="text-gray-400">
               {isLogin ? "Don't have an account? " : "Already have an account? "}
             </span>
             <button
               type="button"
-              className="font-semibold text-brand-600 hover:text-brand-500 transition-colors"
+              className="font-semibold text-cyan-blue hover:text-cyan-blue/80 transition-colors"
               onClick={() => {
                 setIsLogin(!isLogin);
                 setError('');
